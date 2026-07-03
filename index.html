@@ -511,6 +511,8 @@
       <button type="button" id="addTicketBtn">Додати</button>
     </div>
 
+    <div id="qrReader"></div>
+
     <button type="button" id="scanTicketBtn" class="scan-btn">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor">
         <path d="M9 4l1.5-2h3L15 4h4a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h4zm3 15a5 5 0 100-10 5 5 0 000 10zm0-2.2a2.8 2.8 0 110-5.6 2.8 2.8 0 010 5.6z"/>
@@ -518,8 +520,6 @@
 
       <span>Сканувати білет</span>
     </button>
-
-    <div id="qrReader"></div>
 
     <div class="hint">Максимум 10 білетів. Номер можна додати вручну або автоматично з посилання ?number=1234567</div>
 
@@ -571,6 +571,10 @@
       </button>
     </div>
   </div>
+</div>
+
+<div id="toast" class="toast">
+  ✓ Білет успішно додано
 </div>
 
 <script>
@@ -800,6 +804,7 @@
   const qrFileInput = document.getElementById('qrFileInput');
 
   let qrScanner = null;
+  let isProcessingQr = false;
 
   function handleQrResult(decodedText) {
     const text = String(decodedText || '').trim();
@@ -835,6 +840,10 @@
               { facingMode: "environment" },
               { fps: 10, qrbox: 250 },
               decodedText => {
+                if (isProcessingQr) return;
+
+                isProcessingQr = true;
+
                 const added = handleQrResult(decodedText);
 
                 if (added) {
@@ -842,9 +851,15 @@
 
                   setTimeout(() => {
                     if (qrScanner) {
-                      qrScanner.stop();
+                      qrScanner.stop().finally(() => {
+                        isProcessingQr = false;
+                      });
+                    } else {
+                      isProcessingQr = false;
                     }
                   }, 300);
+                } else {
+                  isProcessingQr = false;
                 }
               }
       );
@@ -871,10 +886,6 @@
   //   }
   // });
 </script>
-
-<div id="toast" class="toast">
-  ✓ Білет успішно додано
-</div>
 
 </body>
 </html>
