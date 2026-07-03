@@ -641,7 +641,6 @@
         updatedTickets.splice(index, 1);
         saveTickets(updatedTickets);
         renderTickets();
-        showToast("✓ Білет успішно додано");
       });
 
       li.appendChild(span);
@@ -838,8 +837,14 @@
               decodedText => {
                 const added = handleQrResult(decodedText);
 
-                if (added && qrScanner) {
-                  qrScanner.stop();
+                if (added) {
+                  showToast('✓ Білет успішно додано');
+
+                  setTimeout(() => {
+                    if (qrScanner) {
+                      qrScanner.stop();
+                    }
+                  }, 300);
                 }
               }
       );
