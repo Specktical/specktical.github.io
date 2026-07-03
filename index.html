@@ -439,6 +439,44 @@
       opacity: 0;
     }
 
+    .toast {
+
+      position: fixed;
+
+      left: 50%;
+      bottom: 30px;
+
+      transform: translateX(-50%) translateY(120px);
+
+      background: #323232;
+      color: white;
+
+      padding: 16px 26px;
+
+      border-radius: 14px;
+
+      font-size: 22px;
+      font-weight: bold;
+
+      white-space: nowrap;
+
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+
+      opacity: 0;
+
+      transition: .3s;
+
+      z-index: 10000;
+    }
+
+    .toast.show {
+
+      opacity: 1;
+
+      transform: translateX(-50%) translateY(0);
+
+    }
+
   </style>
 </head>
 
@@ -544,9 +582,28 @@
   const successModal = document.getElementById('successModal');
   const closeModal = document.getElementById('closeModal');
   const hexInputs = Array.from(document.querySelectorAll('.hex-input'));
+  const toast = document.getElementById('toast');
 
   const MAX_TICKETS = 10;
   const STORAGE_KEY = 'contestTickets';
+
+  let toastTimer;
+
+  function showToast(text) {
+
+    toast.textContent = text;
+
+    toast.classList.add('show');
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+
+      toast.classList.remove('show');
+
+    }, 2000);
+
+  }
 
   function getTickets() {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -584,6 +641,7 @@
         updatedTickets.splice(index, 1);
         saveTickets(updatedTickets);
         renderTickets();
+        showToast("✓ Білет успішно додано");
       });
 
       li.appendChild(span);
@@ -808,6 +866,10 @@
   //   }
   // });
 </script>
+
+<div id="toast" class="toast">
+  ✓ Білет успішно додано
+</div>
 
 </body>
 </html>
